@@ -1,0 +1,7 @@
+git init
+git add remote origin https://github.com/erasvuo/Coursera-R_language.git
+git add test.txt
+git commit -m "test commit"
+git push
+
+git pull
