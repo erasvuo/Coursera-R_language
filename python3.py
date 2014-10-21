@@ -14,6 +14,9 @@ HALF_PAD_HEIGHT = PAD_HEIGHT / 2
 LEFT = False
 RIGHT = True
 
+interval = 10000
+speed_multiplier = 1
+
 acc1 = 0
 acc2 = 0
 ball_pos = [WIDTH / 2, HEIGHT / 2]
@@ -26,7 +29,8 @@ paddle2_vel = [0, 0]
 
 
 def start():
-    global ball_pos, ball_vel, paddle1_pos, paddle2_pos
+    global ball_pos, ball_vel, paddle1_pos, paddle2_pos, speed_multiplier
+    speed_multiplier = 1
     ball_pos = [WIDTH / 2, HEIGHT / 2]
     ball_vel = [-150.0 / 60.0, 10.0 / 60.0]
     paddle1_pos = [0, HEIGHT / 2 - PAD_HEIGHT / 2]
@@ -34,7 +38,8 @@ def start():
     new_game()
 
 def reset():
-    global ball_pos, ball_vel, paddle1_pos, paddle2_pos
+    global ball_pos, ball_vel, paddle1_pos, paddle2_pos, speed_multiplier
+    speed_multiplier = 1
     ball_pos = [WIDTH / 2, HEIGHT / 2]
     ball_vel = [0, 0]
     paddle1_pos = [0, HEIGHT / 2 - PAD_HEIGHT / 2]
@@ -145,33 +150,41 @@ def draw(canvas):
 
 
 def keydown(key):
-    global paddle1_vel, paddle2_vel, acc1, acc2
+    global paddle1_vel, paddle2_vel, acc1, acc2, speed_multiplier
     acc1 = 1
     acc2 = 1
     if key==simplegui.KEY_MAP["down"]:
-        paddle1_vel[1] += acc1
+        paddle1_vel[1] += acc1*speed_multiplier
     elif key==simplegui.KEY_MAP["up"]:
-        paddle1_vel[1] -= acc1
+        paddle1_vel[1] -= acc1*speed_multiplier
     elif key==simplegui.KEY_MAP["2"]:
-        paddle2_vel[1] += acc2
+        paddle2_vel[1] += acc2*speed_multiplier
     elif key==simplegui.KEY_MAP["8"]:
-        paddle2_vel[1] -= acc2
+        paddle2_vel[1] -= acc2*speed_multiplier
 
     print paddle1_pos
     print paddle2_pos
 
 
 def keyup(key):
-    global paddle1_vel, paddle2_vel, acc1, acc2
+    global paddle1_vel, paddle2_vel, acc1, acc2, speed_multiplier
 
     if key==simplegui.KEY_MAP["down"]:
-      paddle1_vel[1] -= acc1
+      paddle1_vel[1] -= acc1*speed_multiplier
     elif key==simplegui.KEY_MAP["up"]:
-      paddle1_vel[1] += acc1
+      paddle1_vel[1] += acc1*speed_multiplier
     elif key==simplegui.KEY_MAP["2"]:
-      paddle2_vel[1] -= acc2
+      paddle2_vel[1] -= acc2*speed_multiplier
     elif key==simplegui.KEY_MAP["8"]:
-      paddle2_vel[1] += acc2
+      paddle2_vel[1] += acc2*speed_multiplier
+
+# Handler for timer
+def tick():
+	global bal_vel, speed_multiplier
+	speed_multiplier = speed_multiplier + 1
+	ball_vel[0] = speed_multiplier*ball_vel[0]
+	ball_vel[1] = speed_multiplier*ball_vel[1]
+
 
 # create frame
 frame = simplegui.create_frame("Pong", WIDTH, HEIGHT)
@@ -181,8 +194,10 @@ frame.add_button("Reset", reset, 100)
 frame.set_draw_handler(draw)
 frame.set_keydown_handler(keydown)
 frame.set_keyup_handler(keyup)
+timer = simplegui.create_timer(interval, tick)
 
 
 # start frame
 new_game()
 frame.start()
+timer.start()
