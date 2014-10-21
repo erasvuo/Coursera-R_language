@@ -29,7 +29,9 @@ paddle2_vel = [0, 0]
 
 
 def start():
-    global ball_pos, ball_vel, paddle1_pos, paddle2_pos, speed_multiplier
+    global ball_pos, ball_vel, paddle1_pos, paddle2_pos, speed_multiplier, paddle1_vel, paddle2_vel
+    paddle1_vel = [0, 0]
+    paddle2_vel = [0, 0]
     speed_multiplier = 1
     ball_pos = [WIDTH / 2, HEIGHT / 2]
     ball_vel = [-150.0 / 60.0, 10.0 / 60.0]
@@ -50,8 +52,6 @@ def reset():
 def stop():
     global ball_vel
     ball_vel = [0, 0]
-
-
 
 # initialize ball_pos and ball_vel for new bal in middle of table
 # if direction is RIGHT, the ball's velocity is upper right, else upper left
@@ -84,6 +84,8 @@ def draw(canvas):
         ball_vel[0] = - ball_vel[0]
     elif ball_pos[0] <= PAD_WIDTH + BALL_RADIUS:
         score2 = score2 + 1
+        speed_multiplier = 1
+        ball_vel = [-150.0 / 60.0, 10.0 / 60.0]
         ball_pos = [WIDTH / 2, HEIGHT / 2]
 
 
@@ -92,6 +94,8 @@ def draw(canvas):
         ball_vel[0] = - ball_vel[0]
     elif ball_pos[0] >= WIDTH -1 -BALL_RADIUS - PAD_WIDTH:
         score1 = score1 + 1
+        speed_multiplier = 1
+        ball_vel = [-150.0 / 60.0, 10.0 / 60.0]
         ball_pos = [WIDTH / 2, HEIGHT / 2]
 
     # collide and reflect off of bottom side of canvas
@@ -150,40 +154,40 @@ def draw(canvas):
 
 
 def keydown(key):
-    global paddle1_vel, paddle2_vel, acc1, acc2, speed_multiplier
-    acc1 = 1
-    acc2 = 1
+    global paddle1_vel, paddle2_vel, acc1, acc2
+    acc1 = 2
+    acc2 = 2
     if key==simplegui.KEY_MAP["down"]:
-        paddle1_vel[1] += acc1*speed_multiplier
+        paddle1_vel[1] += acc1
     elif key==simplegui.KEY_MAP["up"]:
-        paddle1_vel[1] -= acc1*speed_multiplier
+        paddle1_vel[1] -= acc1
     elif key==simplegui.KEY_MAP["2"]:
-        paddle2_vel[1] += acc2*speed_multiplier
+        paddle2_vel[1] += acc2
     elif key==simplegui.KEY_MAP["8"]:
-        paddle2_vel[1] -= acc2*speed_multiplier
+        paddle2_vel[1] -= acc2
 
     print paddle1_pos
     print paddle2_pos
 
 
 def keyup(key):
-    global paddle1_vel, paddle2_vel, acc1, acc2, speed_multiplier
+    global paddle1_vel, paddle2_vel, acc1, acc2
 
     if key==simplegui.KEY_MAP["down"]:
-      paddle1_vel[1] -= acc1*speed_multiplier
+      paddle1_vel[1] -= acc1
     elif key==simplegui.KEY_MAP["up"]:
-      paddle1_vel[1] += acc1*speed_multiplier
+      paddle1_vel[1] += acc1
     elif key==simplegui.KEY_MAP["2"]:
-      paddle2_vel[1] -= acc2*speed_multiplier
+      paddle2_vel[1] -= acc2
     elif key==simplegui.KEY_MAP["8"]:
-      paddle2_vel[1] += acc2*speed_multiplier
+      paddle2_vel[1] += acc2
 
 # Handler for timer
 def tick():
-	global bal_vel, speed_multiplier
-	speed_multiplier = speed_multiplier + 1
-	ball_vel[0] = speed_multiplier*ball_vel[0]
-	ball_vel[1] = speed_multiplier*ball_vel[1]
+    global bal_vel, speed_multiplier
+    speed_multiplier = speed_multiplier + 0.5
+    ball_vel[0] = speed_multiplier*ball_vel[0]
+    ball_vel[1] = speed_multiplier*ball_vel[1]
 
 
 # create frame
